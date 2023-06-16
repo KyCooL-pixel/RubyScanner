@@ -7,6 +7,11 @@ public class Token {
     this.lexeme = lexeme;
   }
 
+  public Token(TokenType type) {
+    this.type = type;
+    this.lexeme = "";
+  }
+
   public TokenType getType() {
     return type;
   }
@@ -17,9 +22,6 @@ public class Token {
 
   @Override
   public String toString() {
-    return "Token{" +
-            "type=" + type +
-            ", lexeme='" + lexeme + '\'' +
-            '}'+"\n";
+    return "<type="+type+", "+"lexeme="+"\'"+lexeme+"\'"+">";
   }
 }
