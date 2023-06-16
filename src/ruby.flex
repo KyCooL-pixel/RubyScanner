@@ -18,7 +18,8 @@
 
 // Whitespace
 LineTerminator = \r|\n|\r\n
-WS = {LineTerminator} | [ \t\f]
+InputCharacter = [^\r\n]
+WS = {LineTerminator} | [ \t\f]+
 
 // Identifiers
 ID = [_a-zA-Z][_a-zA-Z0-9]*
@@ -31,7 +32,7 @@ OPERATOR = "." |"+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | "
 GLOBAL = "$" 
 
 // comments single line
-COMMENT = #[^\n\r]*{LineTerminator}? 
+COMMENT = "#" {InputCharacter}* {LineTerminator}?
 %state STRING
 
 
@@ -52,33 +53,35 @@ COMMENT = #[^\n\r]*{LineTerminator}?
 <YYINITIAL> "else" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "elsif" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "end" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "false" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "ensure" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "for" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "if" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "in" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "module" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "next" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "nil" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "not" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "or" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "redo" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "rescue" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "retry" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "return" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "self" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "super" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "then" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "true" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "undef" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "unless" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "until" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "when" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "while" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "yield" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "_ENCODING_" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "_LINE_" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "_FILE_" { return new Token(TokenType.KEYWORD, yytext()); }
+
+// types
+<YYINITIAL> "_ENCODING_" { return new Token(TokenType.TYPE, yytext()); }
+<YYINITIAL> "_LINE_" { return new Token(TokenType.TYPE, yytext()); }
+<YYINITIAL> "_FILE_" { return new Token(TokenType.TYPE, yytext()); }
+<YYINITIAL> "true" { return new Token(TokenType.TYPE, yytext()); }
+<YYINITIAL> "nil" { return new Token(TokenType.TYPE, yytext()); }
+<YYINITIAL> "self" { return new Token(TokenType.TYPE, yytext()); }
+<YYINITIAL> "false" { return new Token(TokenType.TYPE, yytext()); }
 
 
 <YYINITIAL> {

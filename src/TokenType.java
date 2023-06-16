@@ -15,5 +15,6 @@ public enum TokenType {
   LEFT_BRACKET,
   RIGHT_BRACKET,
   COMMA,
-  SEMICOLON
+  SEMICOLON,
+  TYPE
 }
