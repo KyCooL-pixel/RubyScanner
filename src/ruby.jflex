@@ -5,9 +5,6 @@
 %public
 // returns token
 %type Token
-// debug mode, no need parser
-%debug
-
 
 %eofval{
   return new Token(TokenType.EOF, "");
@@ -30,9 +27,11 @@ ID = [_a-zA-Z][_a-zA-Z0-9]*
 NUMBER = 0 | [1-9]([0-9])*(.[0-9]+)?
 
 // operator
-OPERATOR = "+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "!" | "<<" | ">>" | "&" | "|" | "^" | "~" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | "&=" | "^=" | "|=" | "&&=" | "||=" | "**" | "**=" | "%"
+OPERATOR = "." |"+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "!" | "<<" | ">>" | "&" | "|" | "^" | "~" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | "&=" | "^=" | "|=" | "&&=" | "||=" | "**" | "**=" | "%"
+GLOBAL = "$" 
 
-// ...
+// comments single line
+COMMENT = #[^\n\r]*{LineTerminator}? 
 %state STRING
 
 
@@ -86,6 +85,7 @@ OPERATOR = "+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" |
   // String literal starts
   \"     { string.setLength(0); yybegin(STRING); } 
 
+  {GLOBAL} { return new Token(TokenType.GLOBAL, yytext());}
   // whitespace
  {WS}    { /* Skip whitespace */ }
 
@@ -98,6 +98,16 @@ OPERATOR = "+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" |
   // Operators
  {OPERATOR}  { return new Token(TokenType.OPERATOR, yytext()); }
   // ...
+ {COMMENT} {/* ignore comments*/}
+
+ "("         { return new Token(TokenType.LEFT_PAREN); }
+ ")"         { return new Token(TokenType.RIGHT_PAREN); }
+  "{"         { return new Token(TokenType.LEFT_BRACE); }
+  "}"         { return new Token(TokenType.RIGHT_BRACE); }
+  "["         { return new Token(TokenType.LEFT_BRACKET); }
+  "]"         { return new Token(TokenType.RIGHT_BRACKET); }
+  ","         { return new Token(TokenType.COMMA); }
+  ";"         { return new Token(TokenType.SEMICOLON); }
 }
 
 // String state rules
@@ -121,4 +131,5 @@ OPERATOR = "+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" |
 [^]                              { throw new Error("Illegal character <"+ yytext()+">"); }
 
 // Additional helper methods and classes
+
 // ...
