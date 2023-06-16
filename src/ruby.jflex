@@ -3,7 +3,9 @@
 %class RubyLexer
 %unicode
 %public
+// returns token
 %type Token
+// debug mode, no need parser
 %debug
 
 
@@ -12,6 +14,7 @@
 %eofval}
 
 %{
+  // to store the string literal
   StringBuffer string = new StringBuffer();
 %}
 
@@ -35,6 +38,7 @@ OPERATOR = "+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" |
 
 // Initial state rules
 %%
+// keywords
 <YYINITIAL> "BEGIN" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "END" { return new Token(TokenType.KEYWORD, yytext()); }
 <YYINITIAL> "alias" { return new Token(TokenType.KEYWORD, yytext()); }
@@ -79,23 +83,29 @@ OPERATOR = "+" | "-" | "*" | "/" | "=" | "==" | "!=" | "<" | ">" | "<=" | ">=" |
 
 
 <YYINITIAL> {
+  // String literal starts
   \"     { string.setLength(0); yybegin(STRING); } 
+
+  // whitespace
  {WS}    { /* Skip whitespace */ }
 
+  // Identifiers
  {ID}    { return new Token(TokenType.IDENTIFIER, yytext()); }
 
+  // Number literals
  {NUMBER}  { return new Token(TokenType.NUMBER, yytext()); }
 
-  // Handle other patterns and tokens
-  // ...
+  // Operators
  {OPERATOR}  { return new Token(TokenType.OPERATOR, yytext()); }
   // ...
 }
 
 // String state rules
 <STRING> {
+  // String literal ends
   \"     { yybegin(YYINITIAL);
             return new Token(TokenType.STRINGLITERAL, string.toString()); }
+  // String content
   [^\n\r\"\\]+  {  string.append( yytext() ); }
   \\t     { string.append('\t'); }
   \\n         { string.append('\n'); }
