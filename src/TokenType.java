@@ -1,0 +1,9 @@
+public enum TokenType {
+  EOF,
+  IDENTIFIER,
+  KEYWORD,
+  NUMBER,
+  STRINGLITERAL,
+  OPERATOR,
+  ERROR
+}
