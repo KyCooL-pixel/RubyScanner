@@ -5,17 +5,13 @@
 %public
 // returns token
 %type Token
-
 %eofval{
   return new Token(TokenType.EOF, "");
 %eofval}
-
 %{
   // to store the string literal
   StringBuffer string = new StringBuffer();
 %}
-
-
 // Whitespace
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
@@ -33,78 +29,78 @@ GLOBAL = "$"
 
 // comments single line
 COMMENT = "#" {InputCharacter}* {LineTerminator}?
-%state STRING
 
+%state STRING
 
 // Initial state rules
 %%
 // keywords
-<YYINITIAL> "BEGIN" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "END" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "alias" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "and" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "begin" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "break" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "case" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "class" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "def" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "defined?" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "do" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "else" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "elsif" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "end" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "ensure" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "for" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "if" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "in" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "module" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "next" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "not" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "or" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "redo" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "rescue" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "retry" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "return" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "super" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "then" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "undef" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "unless" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "until" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "when" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "while" { return new Token(TokenType.KEYWORD, yytext()); }
-<YYINITIAL> "yield" { return new Token(TokenType.KEYWORD, yytext()); }
+<YYINITIAL>{ 
+ "BEGIN" |
+ "END" |
+ "alias" |
+ "and" |
+ "begin" |
+ "break" |
+ "case" |
+ "class" |
+ "def" |
+ "defined?" |
+ "do" |
+ "else" |
+ "elsif" |
+ "end" |
+ "ensure" |
+ "for" |
+ "if" |
+ "in" |
+ "module" |
+ "next" |
+ "not" |
+ "or" |
+ "redo" |
+ "rescue" |
+ "retry" |
+ "return" |
+ "super" |
+ "then" |
+ "undef" |
+ "unless" |
+ "until" |
+ "when" |
+ "while" |
+ "yield"  { return new Token(TokenType.KEYWORD, yytext()); }
+ }
 
 // types
-<YYINITIAL> "_ENCODING_" { return new Token(TokenType.TYPE, yytext()); }
-<YYINITIAL> "_LINE_" { return new Token(TokenType.TYPE, yytext()); }
-<YYINITIAL> "_FILE_" { return new Token(TokenType.TYPE, yytext()); }
-<YYINITIAL> "true" { return new Token(TokenType.TYPE, yytext()); }
-<YYINITIAL> "nil" { return new Token(TokenType.TYPE, yytext()); }
-<YYINITIAL> "self" { return new Token(TokenType.TYPE, yytext()); }
-<YYINITIAL> "false" { return new Token(TokenType.TYPE, yytext()); }
+<YYINITIAL>{ 
+  "_ENCODING_" |
+  "_LINE_" |
+  "_FILE_" |
+  "true" |
+  "nil" |
+  "self" |
+  "false" { return new Token(TokenType.TYPE, yytext()); }
+}
 
 
 <YYINITIAL> {
   // String literal starts
-  \"     { string.setLength(0); yybegin(STRING); } 
-
-  {GLOBAL} { return new Token(TokenType.GLOBAL, yytext());}
+  \"          { string.setLength(0); yybegin(STRING); } 
+ {GLOBAL}     { return new Token(TokenType.GLOBAL, yytext());}
   // whitespace
- {WS}    { /* Skip whitespace */ }
-
+ {WS}         { /* Skip whitespace */ }
   // Identifiers
- {ID}    { return new Token(TokenType.IDENTIFIER, yytext()); }
-
+ {ID}         { return new Token(TokenType.IDENTIFIER, yytext()); }
   // Number literals
- {NUMBER}  { return new Token(TokenType.NUMBER, yytext()); }
-
+ {NUMBER}     { return new Token(TokenType.NUMBER, yytext()); }
   // Operators
- {OPERATOR}  { return new Token(TokenType.OPERATOR, yytext()); }
-  // ...
- {COMMENT} {/* ignore comments*/}
-
- "("         { return new Token(TokenType.LEFT_PAREN); }
- ")"         { return new Token(TokenType.RIGHT_PAREN); }
+ {OPERATOR}   { return new Token(TokenType.OPERATOR, yytext()); }
+  // Comment
+ {COMMENT}    {/* ignore comments*/}
+  // Delimiters
+ "("          { return new Token(TokenType.LEFT_PAREN); }
+ ")"          { return new Token(TokenType.RIGHT_PAREN); }
   "{"         { return new Token(TokenType.LEFT_BRACE); }
   "}"         { return new Token(TokenType.RIGHT_BRACE); }
   "["         { return new Token(TokenType.LEFT_BRACKET); }
@@ -112,26 +108,23 @@ COMMENT = "#" {InputCharacter}* {LineTerminator}?
   ","         { return new Token(TokenType.COMMA); }
   ";"         { return new Token(TokenType.SEMICOLON); }
 }
-
 // String state rules
 <STRING> {
   // String literal ends
-  \"     { yybegin(YYINITIAL);
-            return new Token(TokenType.STRINGLITERAL, string.toString()); }
+  \"            { yybegin(YYINITIAL);return new Token(TokenType.STRINGLITERAL, string.toString()); }
   // String content
   [^\n\r\"\\]+  {  string.append( yytext() ); }
-  \\t     { string.append('\t'); }
-  \\n         { string.append('\n'); }
+  \\t           { string.append('\t'); }
+  \\n           { string.append('\n'); }
 
-  \\r    { string.append('\r'); }  
-  \\\"     { string.append('\"'); }
-  \\      { string.append('\\'); }
+  \\r           { string.append('\r'); }  
+  \\\"          { string.append('\"'); }
+  \\            { string.append('\\'); }
 }
-
 // Other rules and actions
 // ...
 /* error fallback */
-[^]                              { throw new Error("Illegal character <"+ yytext()+">"); }
+[^]    { throw new Error("Illegal character <"+ yytext()+">"); }
 
 // Additional helper methods and classes
 
